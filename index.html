@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b0e13"><meta name="apple-mobile-web-app-capable" content="yes">
+<title>Órbita Lab · Laboratório de realidade aumentada</title>
+<meta name="description" content="Um laboratório de astronomia em realidade aumentada para explorar com o seu cubo de papel.">
+<link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="./assets/icon-180.png">
+<link rel="preload" as="image" href="./space/hero.webp"><link rel="preload" as="font" href="./assets/inter.woff2" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+<header class="top"><div class="wrap top-inner">
+<a class="wordmark" href="#inicio" aria-label="Órbita Lab, início"><svg class="brand" aria-hidden="true"><use href="./assets/icons.svg#brand"/></svg><span>Órbita<span class="lab">Lab</span></span></a>
+<nav aria-label="Navegação principal"><a class="nav-active" href="#inicio" aria-current="page">Laboratório</a><button class="nav-guide" data-open="guide">Guia do cubo</button></nav>
+<button class="install" data-open="install"><svg class="i"><use href="./assets/icons.svg#download"/></svg><span>Instalar app</span></button>
+</div></header>
+<main id="inicio" class="wrap">
+<section class="hero" aria-labelledby="hero-title">
+<div class="hero-art"></div>
+<div class="hero-content"><div class="kicker"><span class="line"></span> LABORATÓRIO DE REALIDADE AUMENTADA</div>
+<h1 id="hero-title">O universo nas<br>suas mãos<span>.</span></h1>
+<p>Transforme seu cubo de papel em um observatório. Explore os planetas pela câmera do seu celular.</p>
+<div class="hero-actions"><button class="btn primary" id="startCamera"><svg class="i"><use href="./assets/icons.svg#scan"/></svg>Iniciar câmera</button><button class="btn ghost" id="startDemo"><svg class="i play"><use href="./assets/icons.svg#play"/></svg>Ver demonstração</button></div>
+</div>
+<button id="heroJupiter" class="planet-note" aria-label="Ver demonstração de Júpiter"><span class="marker-dot"></span>JÚPITER <svg class="i"><use href="./assets/icons.svg#external"/></svg></button>
+</section>
+<section class="collection" aria-labelledby="models-title">
+<div class="section-top"><div><div class="section-tag"><svg class="i"><use href="./assets/icons.svg#layers"/></svg> COLEÇÃO DE ASTRONOMIA</div><h2 id="models-title">Modelos de exploração</h2></div><span class="section-hint">Selecione um modelo para o cubo</span></div>
+<div class="grid" role="group" aria-label="Escolher modelo">
+<button class="model-card selected" data-model="earth" aria-pressed="true"><div class="card-image"><img src="./space/earth.webp" alt=""><span class="select-ring"><svg class="i"><use href="./assets/icons.svg#check"/></svg></span></div><div class="card-text"><span class="type"><i></i> PLANETA ROCHOSO</span><h3>Planeta Terra</h3><p>Observe os continentes e a rotação do nosso planeta.</p></div></button>
+<button class="model-card" data-model="solar" aria-pressed="false"><div class="card-image"><img src="./space/solar.webp" alt=""><span class="select-ring"><svg class="i"><use href="./assets/icons.svg#check"/></svg></span></div><div class="card-text"><span class="type amber"><i></i> SISTEMA PLANETÁRIO</span><h3>Sistema Solar</h3><p>Acompanhe os oito planetas em órbita ao redor do Sol.</p></div></button>
+<button class="model-card" data-model="jupiter" aria-pressed="false"><div class="card-image"><img src="./space/jupiter.webp" alt=""><span class="select-ring"><svg class="i"><use href="./assets/icons.svg#check"/></svg></span></div><div class="card-text"><span class="type lilac"><i></i> GIGANTE GASOSO</span><h3>Júpiter</h3><p>Explore as faixas de nuvens do maior planeta do Sistema Solar.</p></div></button>
+</div>
+<p class="sr" id="selectedFeedback" aria-live="polite"></p>
+</section>
+<section class="guide-strip"><div class="guide-symbol"><svg class="i"><use href="./assets/icons.svg#cube"/></svg></div><div><h2>Prepare seu cubo</h2><p>Acesse o molde e veja como montar e escanear o Merge Cube.</p></div><button class="text-action" data-open="guide">Abrir guia <svg class="i"><use href="./assets/icons.svg#arrow"/></svg></button></section>
+</main>
+<footer class="wrap foot"><span>Órbita Lab</span><span>Laboratório de astronomia</span></footer>
+<dialog id="guide" class="sheet"><div class="sheet-inner"><button class="close" data-close aria-label="Fechar guia"><svg class="i"><use href="./assets/icons.svg#x"/></svg></button><div class="sheet-icon"><svg class="i"><use href="./assets/icons.svg#cube"/></svg></div><h2>Guia do cubo</h2><ol class="steps"><li><strong>Imprima e monte o cubo</strong><p>Abra o molde oficial, imprima em papel branco, recorte o contorno e dobre nas linhas pontilhadas. Cole as abas por dentro.</p></li><li><strong>Escolha o modelo e abra a câmera</strong><p>Selecione um astro no laboratório. Toque em “Iniciar câmera” e permita o acesso no navegador.</p></li><li><strong>Mostre uma face inteira</strong><p>Aponte a câmera traseira para o cubo em um local iluminado. Comece com uma face de frente, ocupando cerca de um terço da imagem. Mantenha os dedos nas bordas e gire devagar.</p></li></ol><a class="btn primary" href="https://mergecube.com/paper-pdf" target="_blank" rel="noreferrer">Abrir molde oficial <svg class="i"><use href="./assets/icons.svg#external"/></svg></a></div></dialog>
+<dialog id="install" class="sheet"><div class="sheet-inner"><button class="close" data-close aria-label="Fechar instruções"><svg class="i"><use href="./assets/icons.svg#x"/></svg></button><div class="sheet-icon"><svg class="i"><use href="./assets/icons.svg#download"/></svg></div><h2>Instalar Órbita Lab</h2><p id="installIntro">Adicione o laboratório à tela inicial para acessá-lo durante a apresentação.</p><div id="installInstructions"><h3>Android ou computador</h3><p>Abra o menu do Chrome ou Edge e procure “Instalar aplicativo” ou “Adicionar à tela inicial”.</p><h3>iPhone ou iPad</h3><p>No Safari, toque em Compartilhar e depois em “Adicionar à Tela de Início”.</p></div><p class="offline" id="offlineStatus" role="status">Preparando os recursos para uso offline…</p><button id="nativeInstall" class="btn primary" hidden>Instalar neste aparelho</button></div></dialog>
+<dialog id="viewer" class="viewer" aria-label="Explorador de astronomia">
+<div class="stage" id="stage"><video id="video" muted playsinline autoplay></video><canvas id="scene" aria-label="Modelo astronômico animado"></canvas><div class="stage-shade"></div>
+<div class="viewer-top"><button id="leave" class="glass"><svg class="i"><use href="./assets/icons.svg#back"/></svg> Laboratório</button><span id="modeBadge" class="glass badge">Demonstração</span></div>
+<div id="aim" class="aim" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+<div id="cameraHelp" class="camera-help" hidden><div class="sheet-icon"><svg class="i"><use href="./assets/icons.svg#camera"/></svg></div><h2 id="errorTitle"></h2><p id="errorBody"></p><div class="error-actions"><button id="retry" class="btn primary">Tentar novamente</button><button id="fallback" class="btn ghost">Ver demonstração</button></div></div>
+<div class="view-bottom"><p id="status" role="status"></p><div class="panel"><div class="controls"><label class="model-label" for="modelSelect">Modelo<select id="modelSelect"><option value="earth">Planeta Terra</option><option value="solar">Sistema Solar</option><option value="jupiter">Júpiter</option></select></label><button id="pause" class="square" aria-label="Pausar animação" title="Pausar animação"><svg class="i"><use href="./assets/icons.svg#pause"/></svg></button><button id="switchMode" class="mode-button"><svg class="i"><use href="./assets/icons.svg#camera"/></svg><span>Usar câmera</span></button></div><div class="view-info"><span id="modelFact"></span><label for="zoom">Zoom <input id="zoom" type="range" min="65" max="145" value="100"></label></div></div></div>
+</div></dialog>
+<noscript>Ative o JavaScript no navegador para iniciar a câmera e os modelos de astronomia.</noscript><script type="module" src="./app.js"></script>
+</body></html>
