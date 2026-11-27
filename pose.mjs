@@ -7,8 +7,8 @@ const dot=(a,b)=>a.reduce((s,n,i)=>s+n*b[i],0);
 const cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
 const viewing=v=>[v[0],v[1],-v[2]];
 
-export function cubePose({corners,faceId},width,height){
-  const f=.91*Math.max(width,height), cx=width/2, cy=height/2;
+export function cubePose({corners,faceId},width,height,focal=.91*Math.max(width,height)){
+  const f=focal, cx=width/2, cy=height/2;
   const [a,b,c,d]=corners.map(p=>({x:(p.x-cx)/f,y:(p.y-cy)/f}));
   const ux=b.x-c.x, vx=d.x-c.x, uy=b.y-c.y, vy=d.y-c.y;
   const sx=a.x-b.x+c.x-d.x, sy=a.y-b.y+c.y-d.y;

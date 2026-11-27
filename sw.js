@@ -1,4 +1,4 @@
-const CACHE='orbita-lab-20261127-1';
+const CACHE='orbita-lab-20261127-2';
 const BASE=new URL('./',self.location.href);
 const FILES=[
   './','index.html','styles.css','app.js','vision.mjs','pose.mjs','vision-worker.mjs',
@@ -9,6 +9,12 @@ const FILES=[
   'tracking/tracker.mjs','tracking/jsfeat.mjs','tracking/features.mjs','tracking/face-features.bin'
 ].map(path=>new URL(path,BASE).href);
 const KNOWN=new Set(FILES);
+function cleanUrl(requestUrl){
+  const url=new URL(requestUrl);
+  url.search='';
+  url.hash='';
+  return url;
+}
 self.addEventListener('install',event=>{
   event.waitUntil((async()=>{
     const cache=await caches.open(CACHE);
@@ -24,9 +30,10 @@ self.addEventListener('activate',event=>{
 });
 self.addEventListener('fetch',event=>{
   if(event.request.method!=='GET')return;
-  if(event.request.mode==='navigate'&&new URL(event.request.url).pathname===BASE.pathname){
+  const url=cleanUrl(event.request.url);
+  if(event.request.mode==='navigate'&&url.origin===BASE.origin&&(url.pathname===BASE.pathname||url.pathname===BASE.pathname+'index.html')){
     event.respondWith(caches.open(CACHE).then(async cache=>await cache.match(new URL('index.html',BASE).href)||fetch(event.request)));
-  }else if(KNOWN.has(event.request.url)){
-    event.respondWith(caches.open(CACHE).then(async cache=>await cache.match(event.request)||fetch(event.request)));
+  }else if(KNOWN.has(url.href)){
+    event.respondWith(caches.open(CACHE).then(async cache=>await cache.match(url.href)||fetch(event.request)));
   }
 });

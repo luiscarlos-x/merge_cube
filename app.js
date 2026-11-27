@@ -68,7 +68,8 @@ function fail(key){
 }
 function connectCamera(){
   if(!window.isSecureContext||!navigator.mediaDevices?.getUserMedia)return Promise.reject(Object.assign(new Error(),{name:'unsupported'}));
-  const constraints={video:{facingMode:{ideal:'environment'},width:{ideal:1280},height:{ideal:720}},audio:false};
+  const portrait=window.innerHeight>window.innerWidth;
+  const constraints={video:{facingMode:{ideal:'environment'},width:{ideal:portrait?720:1280},height:{ideal:portrait?1280:720}},audio:false};
   return navigator.mediaDevices.getUserMedia(constraints);
 }
 async function start(nextMode){
@@ -97,21 +98,31 @@ async function start(nextMode){
   }catch(error){if(isActive(token))fail(error.name);}
 }
 function capture(now){
-  if(!vision||busy||video.readyState<2||now-lastCapture<78||!video.videoWidth)return;
+  const vw0=video.videoWidth,vh0=video.videoHeight,viewW=stage.clientWidth,viewH=stage.clientHeight;
+  if(!vision||busy||video.readyState<2||now-lastCapture<78||!vw0||!vh0||!viewW||!viewH)return;
   const token=session;busy=true;lastCapture=now;
-  const ratio=560/Math.max(video.videoWidth,video.videoHeight);
-  const w=Math.round(video.videoWidth*ratio),h=Math.round(video.videoHeight*ratio);
-  if(sample.width!==w||sample.height!==h){sample.width=w;sample.height=h;pose=null;}
+  const cover=Math.max(viewW/vw0,viewH/vh0);
+  const srcW=Math.min(vw0,viewW/cover),srcH=Math.min(vh0,viewH/cover);
+  const srcX=(vw0-srcW)/2,srcY=(vh0-srcH)/2;
+  const ratio=560/Math.max(srcW,srcH);
+  const w=Math.max(1,Math.round(srcW*ratio)),h=Math.max(1,Math.round(srcH*ratio));
+  const focal=.91*Math.max(vw0,vh0)*ratio;
+  if(sample.width!==w||sample.height!==h){sample.width=w;sample.height=h;pose=null;lastSeen=-Infinity;}
   try {
-    sampleCtx.drawImage(video,0,0,w,h);
+    sampleCtx.drawImage(video,srcX,srcY,srcW,srcH,0,0,w,h);
     const frame=sampleCtx.getImageData(0,0,w,h);
     vision.detect(frame).then(hit=>{
       if(!isActive(token)||!hit)return;
-      const next=cubePose(hit,w,h);
+      const next=cubePose(hit,w,h,focal);
       if(next){
-        const time=performance.now(), previous=time-lastSeen<280?pose:null;
-        const distance=previous?Math.hypot(next.center[0]-previous.center[0],next.center[1]-previous.center[1]):0;
-        pose=blendPose(previous,next,distance>next.side*.25?.93:.67);
+        const time=performance.now(), previous=time-lastSeen<450?pose:null;
+        const move=previous?Math.hypot(next.center[0]-previous.center[0],next.center[1]-previous.center[1])/Math.max(1,next.side):1;
+        const turn=previous?Math.max(
+          Math.hypot(next.basis.x[0]-previous.basis.x[0],next.basis.x[1]-previous.basis.x[1],next.basis.x[2]-previous.basis.x[2]),
+          Math.hypot(next.basis.z[0]-previous.basis.z[0],next.basis.z[1]-previous.basis.z[1],next.basis.z[2]-previous.basis.z[2])
+        ):1;
+        const weight=!previous?1:(move>.22||turn>.35?.92:move>.05||turn>.1?.68:.45);
+        pose=blendPose(previous,next,weight);
         lastSeen=time;capturedWidth=w;capturedHeight=h;
       }
     }).catch(()=>{if(isActive(token))fail('reader');}).finally(()=>{if(isActive(token))busy=false;});
@@ -126,7 +137,7 @@ function tick(now){
   if(lastTick&&!paused)clock+=Math.min((now-lastTick)/1000,.12);lastTick=now;
   if(mode==='camera')capture(now);
   if(!['demo','camera'].includes(mode))return;
-  const isTracked=pose&&now-lastSeen<370;
+  const isTracked=pose&&performance.now()-lastSeen<520;
   if(mode==='camera'){
     const status=isTracked?'Cubo reconhecido':(pose?'Cubo fora de vista':'Buscando cubo');
     if(el('modeBadge').textContent!==status)el('modeBadge').textContent=status;
@@ -169,5 +180,5 @@ window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installedPr
 window.addEventListener('appinstalled',()=>{installedPrompt=null;showInstallState();});
 el('nativeInstall').onclick=async()=>{const prompt=installedPrompt;if(!prompt)return;installedPrompt=null;await prompt.prompt();await prompt.userChoice;showInstallState();};
 if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('./sw.js',{scope:'./'}).then(()=>navigator.serviceWorker.ready).then(()=>{offlineReady=true;showInstallState();}).catch(()=>showInstallState());
+  navigator.serviceWorker.register('./sw.js',{scope:'./',updateViaCache:'none'}).then(()=>navigator.serviceWorker.ready).then(()=>{offlineReady=true;showInstallState();}).catch(()=>showInstallState());
 }
